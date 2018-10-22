@@ -2,6 +2,7 @@ package com.koma.filforever.RootFolder.GamePages;
 
 import com.badlogic.gdx.Gdx;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -17,8 +18,10 @@ import com.koma.filforever.FakeEye_2DGameEngine_Android.Service.TextAlign;
 import com.koma.filforever.FakeEye_2DGameEngine_Android.Service.TouchEventType;
 import com.koma.filforever.FakeEye_2DGameEngine_Android.UI.UI_ButtonControll;
 import com.koma.filforever.FakeEye_2DGameEngine_Android.UI.UI_CircleButtonControll;
+import com.koma.filforever.FakeEye_2DGameEngine_Android.UI.UI_FloatMessage;
 import com.koma.filforever.FakeEye_2DGameEngine_Android.UI.UI_IMenuControll;
 import com.koma.filforever.RootFolder.Data.DataControll;
+import com.koma.filforever.RootFolder.Data.GameType;
 import com.koma.filforever.RootFolder.Data.SaveLoadService;
 import com.koma.filforever.game.MyTextInputListener;
 
@@ -28,10 +31,14 @@ public class ProfilePage extends IGameState {
     public List<InstructionBase> Instructions;
     public int InstructionIndex;
 
+    public UI_FloatMessage deleteConfirmationHint;
 
     public ProfilePage() {
         Instructions = new LinkedList<InstructionBase>();
         InstructionIndex = 0;
+
+        deleteConfirmationHint = new UI_FloatMessage(Color.Tomato, Color.Black, "Opps", "Some data was removed", new Vector2(DataControll.WindowWidth, 80), 60);
+        Controlls.put("Opps", deleteConfirmationHint);
 
         Controlls.put("MenuButton", new UI_CircleButtonControll(new Vector2(60, 60), Color.LightGray, 25, 30));
         Controlls.get("MenuButton").onTap[0] = MenuButtonHandler;
@@ -88,20 +95,34 @@ public class ProfilePage extends IGameState {
     public Delegate ClearLinesHandler = new Delegate() {
         @Override
         public void ControllTouchDelegate(Vector2 ToouchPosition, Object arg) {
+            ClearRecordsFor(GameType.Lines);
         }
     };
 
     public Delegate ClearSquaresHandler = new Delegate() {
         @Override
         public void ControllTouchDelegate(Vector2 ToouchPosition, Object arg) {
+            ClearRecordsFor(GameType.Squares);
         }
     };
 
     public Delegate ClearSnakesHandler = new Delegate() {
         @Override
         public void ControllTouchDelegate(Vector2 ToouchPosition, Object arg) {
+            ClearRecordsFor(GameType.Snakes);
         }
     };
+
+    public void ClearRecordsFor(GameType gameType) {
+        int index = Arrays.asList(GameType.values()).indexOf(gameType);
+
+        SaveLoadService.I.RemoveSave(gameType);
+        SaveLoadService.I.LoadSetups();
+        DataControll.BestScores.set(index, 0);
+        SaveLoadService.I.SaveSetups();
+
+        deleteConfirmationHint.Show(3);
+    }
 
     public Delegate MenuButtonHandler = new Delegate() {
         @Override
