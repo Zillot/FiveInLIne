@@ -171,7 +171,7 @@ public class SaveLoadService {
         return Gdx.files.local(type + LastGameFieldFileName).exists();
     }
 
-    public void BaseLoadGame(GameMenu game, String fileName, BlowCheckBase blowController) {
+    public void BaseLoadGame(GameMenu game, String fileName) {
         //for PC, WinPhone, Android
         LastGame lastGameData = null;
 
@@ -223,8 +223,8 @@ public class SaveLoadService {
         }
     }
 
-    public void LoadGame(GameMenu game, BlowCheckBase blowController) {
-        BaseLoadGame(game, game.GamaType + LastGameFieldFileName, blowController);
+    public void LoadGame(GameMenu game) {
+        BaseLoadGame(game, game.GamaType + LastGameFieldFileName);
     }
 
     public void SaveSetups() {

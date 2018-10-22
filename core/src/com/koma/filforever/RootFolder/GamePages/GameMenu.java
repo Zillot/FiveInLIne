@@ -302,7 +302,7 @@ public class GameMenu extends IGameState {
                 if (temp[1].compareTo("Load") == 0) {
                     //Загрузка последней игры
                     if (SaveLoadService.I.CanLoadGame(this.GamaType)) {
-                        SaveLoadService.I.LoadGame(this, blowController);
+                        SaveLoadService.I.LoadGame(this);
 
                         DataControll.I.GamePlayed--;
                         SaveLoadService.I.SaveSetups();
