@@ -1,7 +1,6 @@
 package com.koma.filforever.RootFolder.GamePages;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -52,57 +51,6 @@ public class SelectGameModePage extends IGameState {
         Controlls.get("MenuButton").onTap[0] = MenuButtonHandler;
         ((UI_CircleButtonControll) Controlls.get("MenuButton")).IcoDrawEvent = MenuButtonIco;
 
-        dots = new ArrayList<TabsDot>();
-
-        Pages = new ArrayList<UI_GridContainerControll>();
-        UI_GridContainerControll page = new UI_GridContainerControll(new Vector2(0, 0), new Vector2(DataControll.WindowWidth, DataControll.WindowHeight - 70));
-        Vector2 stPos = new Vector2(240.0f - (30.0f * (((float) DataControll.I.GameModes.size() - 1) / 2.0f)), 690);
-
-        for (int i = 0; i < DataControll.I.GameModes.size(); i++) {
-            dots.add(new TabsDot(stPos.add(new Vector2(30 * i, 0))));
-            page = new UI_GridContainerControll(new Vector2(0, 0), new Vector2(DataControll.WindowWidth, DataControll.WindowHeight - 70));
-
-            TreeMap<String, Object> values = new TreeMap<String, Object>();
-            values.put("gameMode", DataControll.I.GameModes.get(i));
-
-            UI_GridContainerControll grid = new UI_GridContainerControll(new Vector2(0,0), new Vector2(DataControll.WindowWidth, DataControll.WindowHeight - 70));
-            grid.ItemsChildrens.add(
-                new UI_CustomItem(90, values,
-                    new Delegate() {
-                        @Override
-                        public void ExtendDraw(SpriteAdapter spriteBatch, NodeItem parent, int layer) {
-                            Vector2 position = parent.Position.add(new Vector2(240, 320));
-                            Vector2 size = new Vector2(150, 150);
-                            String GameModeName = (String) ((UI_CustomItem)parent).Values.get("gameMode");
-
-                            spriteBatch.DrawText(GameModeName.replace("Mode", ""), parent.Position.add(new Vector2(240, 40)),
-                                    Color.Black, 1, "BArial32", 1.0f, TextAlign.CenterXY, 0, 40);
-                            spriteBatch.FillCircle(position, 180, 100, Color.LightGray, 1, 10);
-                            DataControll.I.DrawArrayIco(spriteBatch, DataControll.I.Icons.get(GameModeName), position.sub(size.div(2)), size);
-                        }
-                    }));
-
-            boolean canLoadGame = SaveLoadService.I.CanLoadGame(GameType.valueOf(DataControll.I.GameModes.get(DataControll.GameModeIndex)));
-            if (!canLoadGame) {
-                UI_ButtonControll StartButton = new UI_ButtonControll(new Vector2(DataControll.WindowWidth / 2, 560), Color.DarkGray, Color.Black, "Start Game", new Vector2(200, 80), "BArial20", 34);
-                StartButton.onTap[0] = StartGame;
-                grid.ItemsChildrens.add(StartButton);
-            }
-            else {
-                UI_ButtonControll continueButton = new UI_ButtonControll(new Vector2(DataControll.WindowWidth / 2 - 110, 560), Color.DarkGray, Color.Black, "Continue", new Vector2(200, 80), "BArial20", 34);
-                continueButton.onTap[0] = ContinueLastGame;
-                grid.ItemsChildrens.add(continueButton);
-
-                UI_ButtonControll StartButton = new UI_ButtonControll(new Vector2(DataControll.WindowWidth / 2 + 110, 560), Color.DarkGray, Color.Black, "Start Game", new Vector2(200, 80), "BArial20", 34);
-                StartButton.onTap[0] = StartGame;
-                grid.ItemsChildrens.add(StartButton);
-            }
-
-            page.ItemsChildrens.add(grid);
-            Pages.add(page);
-        }
-
-        dots.get(0).Select();
 
         PageOffset = new Vector2(0);
         DeltaPos = new Vector2(0);
@@ -215,19 +163,6 @@ public class SelectGameModePage extends IGameState {
         }
     };
 
-    public Delegate LeftArrowButtonIco = new Delegate() {
-        @Override
-        public void IcoDraw(SpriteAdapter spriteBatch, Vector2 position, Vector2 size, int layer) {
-            DataControll.I.DrawArrayIco(spriteBatch, DataControll.I.Icons.get("ArrowLeft"), position.sub(size.div(2)), size, layer + 10);
-        }
-    };
-    public Delegate RightArrowButtonIco = new Delegate() {
-        @Override
-        public void IcoDraw(SpriteAdapter spriteBatch, Vector2 position, Vector2 size, int layer) {
-            DataControll.I.DrawArrayIco(spriteBatch, DataControll.I.Icons.get("ArrowRight"), position.sub(size.div(2)), size, layer + 10);
-        }
-    };
-
     @Override
     public void Initialize() {
         super.Initialize();
@@ -253,6 +188,58 @@ public class SelectGameModePage extends IGameState {
         CurrentPage = 0;
         TouchService.I.onContinuesTouch[0] = onContinuesTouch;
         TouchService.I.onNoTouch[0] = onNoTouch;
+
+        dots = new ArrayList<TabsDot>();
+
+        Pages = new ArrayList<UI_GridContainerControll>();
+        UI_GridContainerControll page = new UI_GridContainerControll(new Vector2(0, 0), new Vector2(DataControll.WindowWidth, DataControll.WindowHeight - 70));
+        Vector2 stPos = new Vector2(240.0f - (30.0f * (((float) DataControll.I.GameModes.size() - 1) / 2.0f)), 690);
+
+        for (int i = 0; i < DataControll.I.GameModes.size(); i++) {
+            dots.add(new TabsDot(stPos.add(new Vector2(30 * i, 0))));
+            page = new UI_GridContainerControll(new Vector2(0, 0), new Vector2(DataControll.WindowWidth, DataControll.WindowHeight - 70));
+
+            TreeMap<String, Object> values = new TreeMap<String, Object>();
+            values.put("gameMode", DataControll.I.GameModes.get(i));
+
+            UI_GridContainerControll grid = new UI_GridContainerControll(new Vector2(0,0), new Vector2(DataControll.WindowWidth, DataControll.WindowHeight - 70));
+            grid.ItemsChildrens.add(
+                    new UI_CustomItem(90, values,
+                            new Delegate() {
+                                @Override
+                                public void ExtendDraw(SpriteAdapter spriteBatch, NodeItem parent, int layer) {
+                                    Vector2 position = parent.Position.add(new Vector2(240, 320));
+                                    Vector2 size = new Vector2(150, 150);
+                                    String GameModeName = (String) ((UI_CustomItem)parent).Values.get("gameMode");
+
+                                    spriteBatch.DrawText(GameModeName.replace("Mode", ""), parent.Position.add(new Vector2(240, 40)),
+                                            Color.Black, 1, "BArial32", 1.0f, TextAlign.CenterXY, 0, 40);
+                                    spriteBatch.FillCircle(position, 180, 100, Color.LightGray, 1, 10);
+                                    DataControll.I.DrawArrayIco(spriteBatch, DataControll.I.Icons.get(GameModeName), position.sub(size.div(2)), size);
+                                }
+                            }));
+
+            boolean canLoadGame = SaveLoadService.I.CanLoadGame(GameType.valueOf(DataControll.I.GameModes.get(DataControll.GameModeIndex)));
+            if (!canLoadGame) {
+                UI_ButtonControll StartButton = new UI_ButtonControll(new Vector2(DataControll.WindowWidth / 2, 560), Color.DarkGray, Color.Black, "Start Game", new Vector2(200, 80), "BArial20", 34);
+                StartButton.onTap[0] = StartGame;
+                grid.ItemsChildrens.add(StartButton);
+            }
+            else {
+                UI_ButtonControll continueButton = new UI_ButtonControll(new Vector2(DataControll.WindowWidth / 2 - 110, 560), Color.DarkGray, Color.Black, "Continue", new Vector2(200, 80), "BArial20", 34);
+                continueButton.onTap[0] = ContinueLastGame;
+                grid.ItemsChildrens.add(continueButton);
+
+                UI_ButtonControll StartButton = new UI_ButtonControll(new Vector2(DataControll.WindowWidth / 2 + 110, 560), Color.DarkGray, Color.Black, "Start Game", new Vector2(200, 80), "BArial20", 34);
+                StartButton.onTap[0] = StartGame;
+                grid.ItemsChildrens.add(StartButton);
+            }
+
+            page.ItemsChildrens.add(grid);
+            Pages.add(page);
+        }
+
+        dots.get(0).Select();
     }
 
     @Override
